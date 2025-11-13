@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>7 Minuten Workout Timer</title>
     
-    <!-- --- NIEUWE PWA TAGS --- -->
+    <!-- --- PWA TAGS --- -->
     <!-- Link naar het Manifest bestand -->
     <link rel="manifest" href="manifest.json">
     
@@ -19,142 +19,174 @@
     
     <!-- Placeholder icoon voor Apple (maak deze zelf en upload ze) -->
     <link rel="apple-touch-icon" href="https://placehold.co/180x180/22d3ee/1f2937?text=7M">
-    <!-- --- EINDE NIEUWE PWA TAGS --- -->
+    <!-- --- EINDE PWA TAGS --- -->
     
     <!-- Laad Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Voeg een aangepast lettertype toe voor een 'digitale' look van de timer */
-        @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@700&display=swap');
-        .timer-font {
-            font-family: 'Chakra Petch', sans-serif;
+        /* Voorkom scrollen op mobiel wanneer je de app als PWA gebruikt */
+        body, html {
+            overscroll-behavior-y: contain;
+            font-family: 'Inter', sans-serif;
+        }
+        /* Aangepaste scrollbar voor de modal */
+        #exercise-list::-webkit-scrollbar {
+            width: 8px;
+        }
+        #exercise-list::-webkit-scrollbar-track {
+            background: #374151; /* bg-gray-700 */
+            border-radius: 10px;
+        }
+        #exercise-list::-webkit-scrollbar-thumb {
+            background: #22d3ee; /* bg-cyan-400 */
+            border-radius: 10px;
+        }
+        #exercise-list::-webkit-scrollbar-thumb:hover {
+            background: #67e8f9; /* bg-cyan-300 */
         }
     </style>
 </head>
-<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen font-sans">
+<body class="bg-gray-800 text-white min-h-screen flex items-center justify-center p-4">
 
-    <div class="w-full max-w-lg p-6 bg-gray-800 rounded-2xl shadow-2xl text-center">
-        <h1 class="text-3xl font-bold mb-4 text-cyan-400">7 Minuten Workout</h1>
+    <!-- Hoofdcontainer van de App -->
+    <div class="bg-gray-900 shadow-2xl rounded-2xl p-6 w-full max-w-lg mx-auto">
+        
+        <!-- Titel -->
+        <h1 class="text-3xl md:text-4xl font-bold text-center mb-4 text-cyan-400">
+            7 Minuten Workout
+        </h1>
 
-        <!-- Status & Timer Display -->
-        <div id="status-display" class="text-6xl font-bold mb-2 text-yellow-400 uppercase tracking-wider">
-            Klaar?
-        </div>
-        <div id="timer-display" class="text-9xl font-bold mb-4 timer-font text-white">
-            00:30
-        </div>
+        <!-- Status & Media Container -->
+        <div class="bg-gray-800 p-6 rounded-2xl shadow-inner mb-6 relative aspect-video flex flex-col items-center justify-center">
+            
+            <!-- Status (Oefening, Rust, Klaar) -->
+            <div id="status-display" class="absolute top-4 left-4 bg-gray-900 bg-opacity-75 px-4 py-1 rounded-full text-sm md:text-base font-semibold transition-colors duration-300">
+                Laden...
+            </div>
+            
+            <!-- Timer Display -->
+            <div id="timer-display" class="text-7xl md:text-9xl font-bold text-white z-10" style="text-shadow: 0 0 20px rgba(0,0,0,0.5);">
+                00
+            </div>
 
-        <!-- Exercise Display -->
-        <div class="bg-gray-700 p-4 rounded-lg mb-4">
-            <h2 id="exercise-name" class="text-4xl font-semibold mb-3 truncate">
-                Selecteer Start
-            </h2>
-            <!-- Afbeelding - We gebruiken placeholders van placehold.co -->
-            <img id="exercise-image" 
-                 src="https://placehold.co/600x400/374151/FFFFFF?text=Workout+App" 
-                 alt="Huidige oefening" 
-                 class="w-full h-64 object-cover rounded-lg bg-gray-600">
-        </div>
-
-        <!-- Next Exercise -->
-        <div class="mb-6">
-            <span class="text-gray-400">Volgende:</span>
-            <span id="next-exercise-name" class="text-xl font-medium text-gray-200">Jumping Jacks</span>
+            <!-- Media (Video/GIF) Container -->
+            <div id="media-container" class="absolute inset-0 rounded-2xl overflow-hidden">
+                <!-- Wordt gevuld door JavaScript -->
+            </div>
         </div>
 
-        <!-- Controls -->
-        <div class="flex justify-center space-x-4">
-            <button id="start-pause-btn" class="bg-cyan-500 hover:bg-cyan-400 text-gray-900 font-bold py-3 px-8 rounded-full text-lg uppercase shadow-lg transition duration-300">
+        <!-- Volgende Oefening -->
+        <div class="mb-6 text-center">
+            <span class="text-gray-400">VOLGENDE:</span>
+            <span id="next-exercise" class="font-bold text-lg">Geen</span>
+        </div>
+
+        <!-- Knoppen-paneel -->
+        <div class="grid grid-cols-3 gap-4">
+            <button id="start-pause-btn" class="bg-cyan-500 hover:bg-cyan-400 text-gray-900 font-bold py-3 px-4 rounded-xl shadow-lg transition duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed">
                 Start
             </button>
-            <button id="reset-btn" class="bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 px-8 rounded-full text-lg uppercase shadow-lg transition duration-300">
+            <button id="reset-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition duration-300 transform hover:scale-105">
                 Reset
             </button>
-            <!-- Nieuwe "Instellingen" knop -->
-            <button id="settings-btn" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-8 rounded-full text-lg uppercase shadow-lg transition duration-300">
+            <button id="settings-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition duration-300 transform hover:scale-105">
                 Kies
             </button>
         </div>
     </div>
 
-    <!-- Nieuwe Instellingen Modal -->
-    <div id="settings-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 hidden">
-        <div class="bg-gray-800 w-full max-w-md p-6 rounded-2xl shadow-2xl">
-            <h2 class="text-2xl font-bold mb-4 text-cyan-400">Kies je Oefeningen</h2>
-            <!-- De lijst is nu een flex container voor de knoppen -->
-            <div id="exercise-list" class="max-h-64 overflow-y-auto flex flex-wrap gap-2 mb-6 pr-2">
+    <!-- Modal voor Oefeningenselectie (standaard verborgen) -->
+    <div id="settings-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden backdrop-blur-sm">
+        <div class="bg-gray-800 rounded-2xl shadow-2xl p-6 w-full max-w-md max-h-[90vh] flex flex-col">
+            <h2 class="text-2xl font-bold text-cyan-400 mb-4">Kies je Oefeningen</h2>
+            
+            <!-- Container voor de knoppen, met scrollbar -->
+            <div id="exercise-list" class="flex-grow overflow-y-auto space-y-2 pr-2">
                 <!-- Oefeningen worden hier door JS ingeladen -->
             </div>
-            <div class="flex justify-end">
-                <button id="save-settings-btn" class="bg-cyan-500 hover:bg-cyan-400 text-gray-900 font-bold py-2 px-6 rounded-full text-lg uppercase">
+            
+            <!-- Knoppen onderaan modal -->
+            <div class="mt-6 flex justify-end space-x-4">
+                <button id="modal-close-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-xl transition duration-300">
+                    Annuleer
+                </button>
+                <button id="modal-save-btn" class="bg-cyan-500 hover:bg-cyan-400 text-gray-900 font-bold py-2 px-6 rounded-xl transition duration-300">
                     Opslaan
                 </button>
             </div>
         </div>
     </div>
 
-    <script>
-        // --- 1. DATA: DE OEFENINGEN ---
-        // We gebruiken placehold.co voor afbeeldingen. Vervang deze URL's later!
-        const EXERCISE_DURATION = 30; // 30 seconden
-        const REST_DURATION = 10; // 10 seconden
 
+    <script type="module">
+        // --- 1. CONFIGURATIE & GLOBALE VARIABELEN ---
+        
+        // Timing
+        const EXERCISE_DURATION = 30; // 30 seconden per oefening
+        const REST_DURATION = 10;     // 10 seconden rust
+        
+        // Lijst van alle beschikbare oefeningen
         const ALL_EXERCISES = [
-            { name: "Jumping Jacks", img: "https://media.giphy.com/media/t8eCAL82ZTE4w/giphy.gif" },
-            { name: "Wall Sit", img: "https://www.spotebi.com/wp-content/uploads/2014/10/wall-sit-exercise-illustration.gif" },
-            { name: "Push-up", img: "https://media1.giphy.com/media/W2coT9v4e9P3g314U4/giphy.gif" },
-            // --- HIER ZIJN DE NIEUWE GIFS ---
-            { name: "Abdominal Crunch", img: "https://media.giphy.com/media/l4hLA47nSjmhZ0gBq/giphy.gif" },
-            { name: "Step-Up", img: "https://www.spotebi.com/wp-content/uploads/2015/02/step-up-exercise-illustration.gif" },
-            { name: "Squat", img: "https://media.giphy.com/media/l3q2wgnU3A93s534A/giphy.gif" },
-            { name: "Triceps Dip", img: "https://www.spotebi.com/wp-content/uploads/2014/10/triceps-dips-exercise-illustration.gif" },
-            { name: "Plank", img: "https://media.giphy.com/media/l41lIOPR2i80F1CJa/giphy.gif" },
-            { name: "High Knees", img: "https://www.spotebi.com/wp-content/uploads/2015/03/high-knees-exercise-illustration.gif" },
-            { name: "Lunge", img: "https://www.spotebi.com/wp-content/uploads/2014/10/lunges-exercise-illustration.gif" },
-            { name: "Push-up & Rotation", img: "https://www.spotebi.com/wp-content/uploads/2014/10/push-up-rotation-exercise-illustration.gif" },
-            { name: "Side Plank (L)", img: "https://www.spotebi.com/wp-content/uploads/2014/10/side-plank-exercise-illustration.gif" },
-            { name: "Side Plank (R)", img: "https://www.spotebi.com/wp-content/uploads/2014/10/side-plank-exercise-illustration.gif" }, // Gebruikt dezelfde, gebruiker wisselt zelf van kant
-            // --- NIEUWE OEFENINGEN (NU MET GIFS) ---
-            { name: "Glute Bridge", img: "https://www.spotebi.com/wp-content/uploads/2014/10/glute-bridge-exercise-illustration.gif" },
-            { name: "Bicycle Crunches", img: "https://media.giphy.com/media/l4FGkXgUqjAvnB90A/giphy.gif" },
-            { name: "Mountain Climbers", img: "https://www.spotebi.com/wp-content/uploads/2014/10/mountain-climbers-exercise-illustration.gif" },
-            { name: "Leg Raises", img: "https://www.spotebi.com/wp-content/uploads/2014/10/leg-raises-exercise-illustration.gif" },
-            { name: "Burpees", img: "https://media.giphy.com/media/2W3nQ9s1RkKAw/giphy.gif" },
-            { name: "Bird-dog", img: "https://www.spotebi.com/wp-content/uploads/2014/10/bird-dog-exercise-illustration.gif" },
-            { name: "Superman", img: "https://www.spotebi.com/wp-content/uploads/2014/10/superman-exercise-illustration.gif" }
-            // --- EINDE NIEUWE OEFENINGEN ---
+            { name: "Jumping Jacks", img: "Video Jumping Jack.mp4" },
+            { name: "Muurzitten", img: "https://media1.tenor.com/images/6f23e425014383a0a1a017b2b638d0e0/tenor.gif?itemid=14197061" },
+            { name: "Push-up", img: "https://media.tenor.com/gI-8qCUEko8AAAAC/push-up.gif" },
+            { name: "Abdominal Crunch", img: "https://media.tenor.com/XnFvBqB-S-YAAAAC/ab-crunch-crunches.gif" },
+            { name: "Step-Up", img: "https://media.tenor.com/lVeMClWJt7IAAAAC/step-up.gif" },
+            { name: "Squat", img: "https://media.tenor.com/a-S-HhK_m9UAAAAC/squat.gif" },
+            { name: "Triceps Dip", img: "https://media.tenor.com/S-YJBYpQ-SIAAAAC/tricep-dips.gif" },
+            { name: "Plank", img: "https://media.tenor.com/GgP-i2-gM-QAAAAC/plank-planking.gif" },
+            { name: "High Knees", img: "https://media.tenor.com/NnBClnJza8AAAAAC/high-knees.gif" },
+            { name: "Lunge", img: "https://media.tenor.com/NnBClnJza8AAAAAC/high-knees.gif" },
+            { name: "Push-up & Rotatie", img: "https://media.tenor.com/T0NIuMefnF0AAAAC/push-up-rotation.gif" },
+            { name: "Side Plank (Links)", img: "https://media.tenor.com/0oQ_tHjA-S0AAAAC/side-plank.gif" },
+            { name: "Side Plank (Rechts)", img: "https://media.tenor.com/0oQ_tHjA-S0AAAAC/side-plank.gif" },
+            { name: "Glute Bridge", img: "https://media.tenor.com/gYqj-N-hP-QAAAAC/glute-bridge.gif" },
+            { name: "Bicycle Crunches", img: "https://media.tenor.com/R-1sEJtCVcQAAAAC/bicycle-crunches.gif" },
+            { name:LET_S_GO_TEXT: "Mountain Climbers", img: "https://media.tenor.com/xT-L1nTZ03EAAAAC/mountain-climbers.gif" },
+            { name: "Leg Raises", img: "https://media.tenor.com/wF-sJeM-c-UAAAAC/leg-raises.gif" },
+            { name: "Burpees", img: "https://media.tenor.com/iQRt-5xnwqEAAAAC/burpees.gif" },
+            { name: "Bird-dog", img: "https://media.tenor.com/JAhW9mX8c-AAAAAC/bird-dog.gif" },
+            { name: "Superman", img: "https://media.tenor.com/iV2mZeMr1b0AAAAC/superman-exercise.gif" }
         ];
 
+        // App-status variabelen
+        let selectedExercises = [...ALL_EXERCISES]; // Standaard alle oefeningen
+        let currentExerciseIndex = 0;
+        let currentTime = EXERCISE_DURATION;
+        let isResting = false;
+        let isPaused = true;
+        let timerInterval = null;
+        
         // --- 2. AUDIO CONTEXT (voor bliepjes zonder .mp3) ---
         let audioCtx;
         try {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         } catch (e) {
-            console.warn("Web Audio API is not supported in this browser");
+            console.warn('Web Audio API wordt niet ondersteund in deze browser');
         }
-        
-        function playBeep(frequency, duration, type = 'sine') {
+
+        const playBeep = (freq = 520, duration = 150, type = 'square') => {
             if (!audioCtx) return;
             const oscillator = audioCtx.createOscillator();
             const gainNode = audioCtx.createGain();
-
             oscillator.connect(gainNode);
             gainNode.connect(audioCtx.destination);
-
+            
             oscillator.type = type;
-            oscillator.frequency.setValueAtTime(frequency, audioCtx.currentTime);
-
-            oscillator.start();
-            gainNode.gain.setValueAtTime(1, audioCtx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + (duration / 1000));
+            oscillator.frequency.value = freq;
+            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.01);
+            
+            oscillator.start(audioCtx.currentTime);
+            gainNode.gain.exponentialCurveToValueAtTime(0.00001, audioCtx.currentTime + (duration / 1000));
             oscillator.stop(audioCtx.currentTime + (duration / 1000));
-        }
-        
-        const startBeep = () => playBeep(880, 200, 'triangle'); // Hogere 'start' bliep
+        };
+
+        const startBeep = () => playBeep(880, 150, 'triangle'); // Hogere 'start' bliep
         const restBeep = () => playBeep(440, 300, 'sine'); // Lagere 'rust' bliep
         const finalBeep = () => { playBeep(980, 150); setTimeout(() => playBeep(980, 150), 200); setTimeout(() => playBeep(980, 150), 400); };
 
-        // --- NIEUW: SPRAAK SYNTHESE ---
+        // --- SPRAAK SYNTHESE ---
         const synth = window.speechSynthesis;
         let voices = [];
 
@@ -194,80 +226,88 @@
             
             synth.speak(utterance);
         }
-        // --- EINDE NIEUWE CODE ---
-
 
         // --- 3. DOM ELEMENTEN ---
-        const timerDisplay = document.getElementById('timer-display');
         const statusDisplay = document.getElementById('status-display');
-        const exerciseName = document.getElementById('exercise-name');
-        const exerciseImage = document.getElementById('exercise-image');
-        const nextExerciseName = document.getElementById('next-exercise-name');
+        const timerDisplay = document.getElementById('timer-display');
+        const nextExercise = document.getElementById('next-exercise');
         const startPauseBtn = document.getElementById('start-pause-btn');
         const resetBtn = document.getElementById('reset-btn');
-        // Nieuwe modal elementen
         const settingsBtn = document.getElementById('settings-btn');
+        const mediaContainer = document.getElementById('media-container');
+
+        // Modal DOM
         const settingsModal = document.getElementById('settings-modal');
-        const saveSettingsBtn = document.getElementById('save-settings-btn');
-        const exerciseListContainer = document.getElementById('exercise-list');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+        const modalSaveBtn = document.getElementById('modal-save-btn');
+        const exerciseList = document.getElementById('exercise-list');
 
+        // --- 4. KERNFUNCTIES ---
 
-        // --- 4. APP STATE (Status) ---
-        let selectedExercises = [...ALL_EXERCISES]; // Standaard alle oefeningen
-        let currentExerciseIndex = 0;
-        let isResting = false;
-        let isPaused = true;
-        let timerInterval = null;
-        let currentTime = EXERCISE_DURATION;
-
-        // --- 5. CORE LOGICA ---
         function updateDisplay() {
             // Update timer
-            const minutes = Math.floor(currentTime / 60);
-            const seconds = currentTime % 60;
-            timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-            
-            if (isPaused) {
-                statusDisplay.textContent = "Gepauzeerd";
-                statusDisplay.classList.remove('text-green-400', 'text-yellow-400');
-                statusDisplay.classList.add('text-gray-400');
-                return;
-            }
+            timerDisplay.textContent = String(currentTime).padStart(2, '0');
 
-            // Gebruik nu 'selectedExercises'
-            const currentExercise = selectedExercises[currentExerciseIndex];
+            // Update media (Video of GIF)
+            let currentMediaUrl = '';
             
             if (isResting) {
-                // Rustfase
-                statusDisplay.textContent = "Rust";
-                exerciseName.textContent = "Even rusten...";
-                exerciseImage.src = "https://placehold.co/600x400/374151/FFFFFF?text=Rust";
-                statusDisplay.classList.remove('text-green-400', 'text-gray-400');
+                statusDisplay.textContent = "RUST";
+                statusDisplay.classList.remove('text-cyan-400');
                 statusDisplay.classList.add('text-yellow-400');
-                timerDisplay.classList.remove('text-white');
-                timerDisplay.classList.add('text-yellow-400');
-
-                // Update 'volgende'
-                nextExerciseName.textContent = currentExercise.name;
-
+                mediaContainer.innerHTML = ''; // Leeg media tijdens rust
+                
+                // Set "Volgende"
+                if (currentExerciseIndex < selectedExercises.length) {
+                    currentMediaUrl = selectedExercises[currentExerciseIndex].img;
+                }
+                
             } else {
-                // Oefeningfase
-                // Gebruik nu 'selectedExercises'
-                statusDisplay.textContent = `Oefening ${currentExerciseIndex + 1}/${selectedExercises.length}`;
-                exerciseName.textContent = currentExercise.name;
-                exerciseImage.src = currentExercise.img;
-                statusDisplay.classList.remove('text-yellow-400', 'text-gray-400');
-                statusDisplay.classList.add('text-green-400');
-                timerDisplay.classList.remove('text-yellow-400');
-                timerDisplay.classList.add('text-white');
+                // Huidige oefening
+                const currentExercise = selectedExercises[currentExerciseIndex];
+                statusDisplay.textContent = currentExercise.name.toUpperCase();
+                statusDisplay.classList.remove('text-yellow-400');
+                statusDisplay.classList.add('text-cyan-400');
+                
+                currentMediaUrl = currentExercise.img;
+            }
 
-                // Update 'volgende'
-                const nextIndex = currentExerciseIndex + 1;
-                // Gebruik nu 'selectedExercises'
-                if (nextIndex < selectedExercises.length) {
-                    nextExerciseName.textContent = selectedExercises[nextIndex].name;
-                } else {
-                    nextExerciseName.textContent = "Laatste ronde!";
+            // Update "Volgende" tekst
+            if (currentExerciseIndex + 1 < selectedExercises.length) {
+                nextExercise.textContent = selectedExercises[currentExerciseIndex + 1].name;
+            } else if (currentExerciseIndex + 1 === selectedExercises.length && isResting) {
+                nextExercise.textContent = "Laatste ronde!";
+            } else {
+                nextExercise.textContent = "Geen";
+            }
+            
+            // Render de media (Video of GIF)
+            // We doen dit alleen als het media-element er nog niet is
+            const activeMedia = mediaContainer.children[0];
+            const newMediaId = 'media-' + currentMediaUrl;
+
+            if (!activeMedia || activeMedia.id !== newMediaId) {
+                mediaContainer.innerHTML = ''; // Wis vorige media
+                
+                if (currentMediaUrl) {
+                    let mediaElement;
+                    if (currentMediaUrl.endsWith('.mp4')) {
+                        // Maak een video element
+                        mediaElement = document.createElement('video');
+                        mediaElement.src = currentMediaUrl;
+                        mediaElement.autoplay = true;
+                        mediaElement.muted = true; // Autoplay vereist 'muted'
+                        mediaElement.loop = true;
+                        mediaElement.playsInline = true; // Belangrijk voor iOS
+                    } else {
+                        // Maak een img element voor GIFs
+                        mediaElement = document.createElement('img');
+                        mediaElement.src = currentMediaUrl;
+                    }
+                    
+                    mediaElement.id = newMediaId;
+                    mediaElement.className = 'w-full h-full object-cover';
+                    mediaContainer.appendChild(mediaElement);
                 }
             }
         }
@@ -320,15 +360,8 @@
         }
 
         function startWorkout() {
-            // Check of er oefeningen zijn geselecteerd
-            if (selectedExercises.length === 0) {
-                exerciseName.textContent = "Kies oefeningen!";
-                statusDisplay.textContent = "Geen selectie";
-                startPauseBtn.disabled = true;
-                return; // Start niet
-            }
-
-            if (timerInterval) clearInterval(timerInterval); // Zorg dat er maar één timer loopt
+            if (selectedExercises.length === 0) return; // Niet starten zonder oefeningen
+            
             isPaused = false;
             startPauseBtn.textContent = "Pauze";
             startBeep();
@@ -346,21 +379,20 @@
 
         function pauseWorkout() {
             isPaused = true;
+            clearInterval(timerInterval);
+            timerInterval = null;
             startPauseBtn.textContent = "Hervat";
-            updateDisplay();
         }
-        
+
         function finishWorkout() {
             clearInterval(timerInterval);
             timerInterval = null;
             isPaused = true;
             
-            statusDisplay.textContent = "Compleet!";
-            exerciseName.textContent = "Goed gedaan!";
-            exerciseImage.src = "https://placehold.co/600x400/374151/FFFFFF?text=Gefeliciteerd!";
-            nextExerciseName.textContent = "-";
+            statusDisplay.textContent = "KLAAR!";
+            timerDisplay.textContent = "💪";
+            nextExercise.textContent = "Goed gedaan!";
             startPauseBtn.textContent = "Start";
-            // We disablen de startknop niet volledig, resetten kan nog
             startPauseBtn.disabled = true; 
             statusDisplay.classList.add('text-cyan-400');
             finalBeep();
@@ -377,121 +409,101 @@
             clearInterval(timerInterval);
             timerInterval = null;
             currentExerciseIndex = 0;
+            currentTime = EXERCISE_DURATION;
             isResting = false;
             isPaused = true;
-            currentTime = EXERCISE_DURATION;
             
-            // Reset UI
             startPauseBtn.textContent = "Start";
-            timerDisplay.classList.remove('text-yellow-400');
-            timerDisplay.classList.add('text-white');
-            timerDisplay.textContent = "00:30";
-            statusDisplay.classList.remove('text-green-400', 'text-yellow-400', 'text-cyan-400');
-
-            // Update UI op basis van selectie
+            
+            // Update UI op basis van geselecteerde oefeningen
             if (selectedExercises.length > 0) {
                 startPauseBtn.disabled = false;
-                statusDisplay.textContent = "Klaar?";
-                exerciseName.textContent = "Selecteer Start";
-                exerciseImage.src = "https://placehold.co/600x400/374151/FFFFFF?text=Workout+App";
-                nextExerciseName.textContent = selectedExercises[0].name; // Gebruik 'selectedExercises'
+                timerDisplay.textContent = String(EXERCISE_DURATION).padStart(2, '0');
+                // Laad de media van de eerste oefening
+                const firstMedia = selectedExercises[0].img;
+                mediaContainer.innerHTML = ''; // Wis
+                let mediaElement;
+                if (firstMedia.endsWith('.mp4')) {
+                    mediaElement = document.createElement('video');
+                    mediaElement.src = firstMedia;
+                    mediaElement.muted = true;
+                    mediaElement.loop = true;
+                    mediaElement.playsInline = true;
+                } else {
+                    mediaElement = document.createElement('img');
+                    mediaElement.src = firstMedia;
+                }
+                mediaElement.id = 'media-' + firstMedia;
+                mediaElement.className = 'w-full h-full object-cover';
+                mediaContainer.appendChild(mediaElement);
+                
+                statusDisplay.textContent = selectedExercises[0].name.toUpperCase();
+                nextExercise.textContent = selectedExercises.length > 1 ? selectedExercises[1].name : "Geen";
             } else {
+                // Geen oefeningen geselecteerd
                 startPauseBtn.disabled = true;
-                statusDisplay.textContent = "Wacht...";
-                exerciseName.textContent = "Kies oefeningen!";
-                exerciseImage.src = "https://placehold.co/600x400/374151/FFFFFF?text=Geen+Selectie";
-                nextExerciseName.textContent = "-";
+                timerDisplay.textContent = "00";
+                statusDisplay.textContent = "Kies oefeningen!";
+                nextExercise.textContent = "Geen";
+                mediaContainer.innerHTML = '';
             }
+            
+            statusDisplay.classList.remove('text-yellow-400');
+            statusDisplay.classList.add('text-cyan-400');
         }
 
-        // --- 6. NIEUWE MODAL LOGICA ---
-        function initializeSettingsModal() {
-            exerciseListContainer.innerHTML = ''; // Leegmaken voor zekerheid
-            const currentSelectionNames = selectedExercises.map(ex => ex.name);
+        // --- 5. MODAL FUNCTIES ---
 
+        function populateModal() {
+            exerciseList.innerHTML = ''; // Leeg de lijst
+            
             ALL_EXERCISES.forEach(exercise => {
-                const isSelected = currentSelectionNames.includes(exercise.name);
+                const isSelected = selectedExercises.some(sel => sel.name === exercise.name);
                 
-                // Bepaal de styling op basis van selectie
-                const buttonClasses = isSelected
-                    ? 'bg-cyan-500 text-gray-900' // Geselecteerd
-                    : 'bg-gray-700 text-white'; // Niet geselecteerd
-
-                const itemHtml = `
-                    <button 
-                       class="font-medium py-2 px-4 rounded-full transition-colors duration-200 ${buttonClasses}"
-                       data-exercise-name="${exercise.name}"
-                       data-selected="${isSelected}">
-                        ${exercise.name}
-                    </button>
-                `;
-                exerciseListContainer.innerHTML += itemHtml;
+                const btn = document.createElement('button');
+                btn.textContent = exercise.name;
+                btn.dataset.name = exercise.name; // Sla de naam op in data-attribuut
+                
+                // Stijl op basis van selectie
+                btn.className = 'w-full text-left font-semibold py-3 px-4 rounded-lg transition-colors duration-200';
+                if (isSelected) {
+                    btn.classList.add('bg-cyan-500', 'text-gray-900');
+                } else {
+                    btn.classList.add('bg-gray-700', 'hover:bg-gray-600', 'text-white');
+                }
+                
+                // Toggle functionaliteit
+                btn.addEventListener('click', () => {
+                    btn.classList.toggle('bg-cyan-500');
+                    btn.classList.toggle('text-gray-900');
+                    btn.classList.toggle('bg-gray-700');
+                    btn.classList.toggle('hover:bg-gray-600');
+                    btn.classList.toggle('text-white');
+                });
+                
+                exerciseList.appendChild(btn);
             });
         }
 
         function updateSelectedExercisesFromModal() {
             const newSelectedExercises = [];
-            // Verander de selector van checkboxes naar buttons met data-selected="true"
-            const selectedButtons = exerciseListContainer.querySelectorAll('button[data-selected="true"]');
+            const buttons = exerciseList.querySelectorAll('button');
             
-            selectedButtons.forEach(button => {
-                const exerciseName = button.dataset.exerciseName;
-                // --- FIX START ---
-                // Deze logica ontbrak door de syntax error
-                const exercise = ALL_EXERCISES.find(ex => ex.name === exerciseName);
-                if (exercise) {
-                    newSelectedExercises.push(exercise);
+            buttons.forEach(btn => {
+                // Als de knop de "geselecteerd" stijl heeft
+                if (btn.classList.contains('bg-cyan-500')) {
+                    // Zoek de volledige oefening-data in de ALL_EXERCISES lijst
+                    const exerciseData = ALL_EXERCISES.find(ex => ex.name === btn.dataset.name);
+                    if (exerciseData) {
+                        newSelectedExercises.push(exerciseData);
+                    }
                 }
-            }); // <-- Deze haakjes ontbraken
+            });
             
-            selectedExercises = newSelectedExercises; // Deze regel moet *na* de loop
-            // --- FIX END ---
+            selectedExercises = newSelectedExercises;
         }
 
-        // Event Listeners voor Modal
-        settingsBtn.addEventListener('click', () => {
-            initializeSettingsModal(); // Zorg dat de checkboxes de huidige selectie tonen
-            settingsModal.classList.remove('hidden');
-        });
-
-        saveSettingsBtn.addEventListener('click', () => {
-            updateSelectedExercisesFromModal();
-            settingsModal.classList.add('hidden');
-            resetWorkout(); // Reset de app om de nieuwe selectie te laden
-        });
-
-        // Klik op achtergrond om te sluiten
-        settingsModal.addEventListener('click', (e) => {
-            if (e.target === settingsModal) {
-                settingsModal.classList.add('hidden');
-            }
-        });
-
-
-        // Nieuwe listener voor het klikken op de oefening-knoppen
-        exerciseListContainer.addEventListener('click', (e) => {
-            const button = e.target.closest('button[data-exercise-name]');
-            if (!button) return; // Klik was niet op een knop
-
-            // Haal de huidige status op
-            let isSelected = button.dataset.selected === 'true';
-
-            // Keer de status om
-            isSelected = !isSelected;
-            button.dataset.selected = isSelected;
-
-            // Update de styling
-            if (isSelected) {
-                button.classList.remove('bg-gray-700', 'text-white');
-                button.classList.add('bg-cyan-500', 'text-gray-900');
-            } else {
-                button.classList.remove('bg-cyan-500', 'text-gray-900');
-                button.classList.add('bg-gray-700', 'text-white');
-            }
-        });
-
-
-        // --- 7. EVENT LISTENERS (Oorspronkelijk) ---
+        // --- 6. EVENT LISTENERS ---
         startPauseBtn.addEventListener('click', () => {
             if (audioCtx && audioCtx.state === 'suspended') {
                 audioCtx.resume(); // Belangrijk voor browsers die audio auto-play blokkeren
@@ -512,10 +524,28 @@
 
         resetBtn.addEventListener('click', resetWorkout);
 
+        // Modal event listeners
+        settingsBtn.addEventListener('click', () => {
+            populateModal(); // Vul de modal met de *huidige* selectie
+            settingsModal.classList.remove('hidden');
+        });
+
+        modalCloseBtn.addEventListener('click', () => {
+            settingsModal.classList.add('hidden');
+        });
+
+        modalSaveBtn.addEventListener('click', () => {
+            updateSelectedExercisesFromModal(); // Sla de nieuwe selectie op
+            settingsModal.classList.add('hidden');
+            resetWorkout(); // Reset de timer met de nieuwe selectie
+        });
+
+
+        // --- 7. INITIALISATIE ---
         // Initialiseer de app bij laden
         resetWorkout();
 
-        // --- NIEUW: SERVICE WORKER REGISTRATIE ---
+        // --- SERVICE WORKER REGISTRATIE ---
         // Dit script registreert de service-worker voor offline functionaliteit
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -528,7 +558,6 @@
                     });
             });
         }
-        // --- EINDE NIEUW SCRIPT ---
 
     </script>
 </body>
