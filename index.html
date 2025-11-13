@@ -147,7 +147,6 @@
             { name: "Side Plank (Rechts)", img: "https://media.tenor.com/0oQ_tHjA-S0AAAAC/side-plank.gif" },
             { name: "Glute Bridge", img: "https://media.tenor.com/gYqj-N-hP-QAAAAC/glute-bridge.gif" },
             { name: "Bicycle Crunches", img: "https://media.tenor.com/R-1sEJtCVcQAAAAC/bicycle-crunches.gif" },
-            // *** FOUT OPGELOST: 'LET_S_GO_TEXT:' verwijderd ***
             { name: "Mountain Climbers", img: "https://media.tenor.com/xT-L1nTZ03EAAAAC/mountain-climbers.gif" },
             { name: "Leg Raises", img: "https://media.tenor.com/wF-sJeM-c-UAAAAC/leg-raises.gif" },
             { name: "Burpees", img: "https://media.tenor.com/iQRt-5xnwqEAAAAC/burpees.gif" },
@@ -184,7 +183,8 @@
             gainNode.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.01);
             
             oscillator.start(audioCtx.currentTime);
-            gainNode.gain.exponentialCurveToValueAtTime(0.00001, audioCtx.currentTime + (duration / 1000));
+            // *** FOUT OPGELOST: 'exponentialCurve' vervangen door 'linearRamp' ***
+            gainNode.gain.linearRampToValueAtTime(0.00001, audioCtx.currentTime + (duration / 1000));
             oscillator.stop(audioCtx.currentTime + (duration / 1000));
         };
 
