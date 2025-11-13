@@ -8,12 +8,17 @@
     <!-- --- PWA TAGS --- -->
     <!-- Link naar het Manifest bestand -->
     <link rel="manifest" href="manifest.json">
+
+    <!-- Oplossing voor Favicon 404 -->
+    <link rel="icon" type="image/png" href="https://placehold.co/192x192/22d3ee/1f2937?text=7M">
     
     <!-- Thema kleur voor de browser UI (vooral op Android) -->
     <meta name="theme-color" content="#1f2937"> <!-- bg-gray-800 -->
     
     <!-- iOS specifieke tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <!-- Oplossing voor Deprecation warning -->
+    <meta name="mobile-web-app-capable" content="yes"> 
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="7 Min Workout">
     
@@ -142,7 +147,8 @@
             { name: "Side Plank (Rechts)", img: "https://media.tenor.com/0oQ_tHjA-S0AAAAC/side-plank.gif" },
             { name: "Glute Bridge", img: "https://media.tenor.com/gYqj-N-hP-QAAAAC/glute-bridge.gif" },
             { name: "Bicycle Crunches", img: "https://media.tenor.com/R-1sEJtCVcQAAAAC/bicycle-crunches.gif" },
-            { name:LET_S_GO_TEXT: "Mountain Climbers", img: "https://media.tenor.com/xT-L1nTZ03EAAAAC/mountain-climbers.gif" },
+            // *** FOUT OPGELOST: 'LET_S_GO_TEXT:' verwijderd ***
+            { name: "Mountain Climbers", img: "https://media.tenor.com/xT-L1nTZ03EAAAAC/mountain-climbers.gif" },
             { name: "Leg Raises", img: "https://media.tenor.com/wF-sJeM-c-UAAAAC/leg-raises.gif" },
             { name: "Burpees", img: "https://media.tenor.com/iQRt-5xnwqEAAAAC/burpees.gif" },
             { name: "Bird-dog", img: "https://media.tenor.com/JAhW9mX8c-AAAAAC/bird-dog.gif" },
