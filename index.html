@@ -6,14 +6,12 @@
     <title>7 Minuten Workout Timer</title>
     
     <!-- --- PWA TAGS --- -->
-    <!-- Link naar het Manifest bestand -->
     <link rel="manifest" href="manifest.json">
 
-    <!-- Oplossing voor Favicon 404 -->
+    <!-- Oplossing voor Favicon 404 (gebruikt het PWA-icoon) -->
     <link rel="icon" type="image/png" href="https://placehold.co/192x192/22d3ee/1f2937?text=7M">
     
-    <!-- Thema kleur voor de browser UI (vooral op Android) -->
-    <meta name="theme-color" content="#1f2937"> <!-- bg-gray-800 -->
+    <meta name="theme-color" content="#1f2937">
     
     <!-- iOS specifieke tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -22,19 +20,15 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="7 Min Workout">
     
-    <!-- Placeholder icoon voor Apple (maak deze zelf en upload ze) -->
     <link rel="apple-touch-icon" href="https://placehold.co/180x180/22d3ee/1f2937?text=7M">
     <!-- --- EINDE PWA TAGS --- -->
     
-    <!-- Laad Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Voorkom scrollen op mobiel wanneer je de app als PWA gebruikt */
         body, html {
             overscroll-behavior-y: contain;
             font-family: 'Inter', sans-serif;
         }
-        /* Aangepaste scrollbar voor de modal */
         #exercise-list::-webkit-scrollbar {
             width: 8px;
         }
@@ -56,7 +50,6 @@
     <!-- Hoofdcontainer van de App -->
     <div class="bg-gray-900 shadow-2xl rounded-2xl p-6 w-full max-w-lg mx-auto">
         
-        <!-- Titel -->
         <h1 class="text-3xl md:text-4xl font-bold text-center mb-4 text-cyan-400">
             7 Minuten Workout
         </h1>
@@ -64,12 +57,10 @@
         <!-- Status & Media Container -->
         <div class="bg-gray-800 p-6 rounded-2xl shadow-inner mb-6 relative aspect-video flex flex-col items-center justify-center">
             
-            <!-- Status (Oefening, Rust, Klaar) -->
             <div id="status-display" class="absolute top-4 left-4 bg-gray-900 bg-opacity-75 px-4 py-1 rounded-full text-sm md:text-base font-semibold transition-colors duration-300">
                 Laden...
             </div>
             
-            <!-- Timer Display -->
             <div id="timer-display" class="text-7xl md:text-9xl font-bold text-white z-10" style="text-shadow: 0 0 20px rgba(0,0,0,0.5);">
                 00
             </div>
@@ -80,13 +71,11 @@
             </div>
         </div>
 
-        <!-- Volgende Oefening -->
         <div class="mb-6 text-center">
             <span class="text-gray-400">VOLGENDE:</span>
             <span id="next-exercise" class="font-bold text-lg">Geen</span>
         </div>
 
-        <!-- Knoppen-paneel -->
         <div class="grid grid-cols-3 gap-4">
             <button id="start-pause-btn" class="bg-cyan-500 hover:bg-cyan-400 text-gray-900 font-bold py-3 px-4 rounded-xl shadow-lg transition duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed">
                 Start
@@ -100,17 +89,15 @@
         </div>
     </div>
 
-    <!-- Modal voor Oefeningenselectie (standaard verborgen) -->
+    <!-- Modal voor Oefeningenselectie -->
     <div id="settings-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden backdrop-blur-sm">
         <div class="bg-gray-800 rounded-2xl shadow-2xl p-6 w-full max-w-md max-h-[90vh] flex flex-col">
             <h2 class="text-2xl font-bold text-cyan-400 mb-4">Kies je Oefeningen</h2>
             
-            <!-- Container voor de knoppen, met scrollbar -->
             <div id="exercise-list" class="flex-grow overflow-y-auto space-y-2 pr-2">
                 <!-- Oefeningen worden hier door JS ingeladen -->
             </div>
             
-            <!-- Knoppen onderaan modal -->
             <div class="mt-6 flex justify-end space-x-4">
                 <button id="modal-close-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-xl transition duration-300">
                     Annuleer
@@ -126,11 +113,9 @@
     <script type="module">
         // --- 1. CONFIGURATIE & GLOBALE VARIABELEN ---
         
-        // Timing
-        const EXERCISE_DURATION = 30; // 30 seconden per oefening
-        const REST_DURATION = 10;     // 10 seconden rust
+        const EXERCISE_DURATION = 30;
+        const REST_DURATION = 10;
         
-        // Lijst van alle beschikbare oefeningen
         const ALL_EXERCISES = [
             { name: "Jumping Jacks", img: "Video Jumping Jack.mp4" },
             { name: "Muurzitten", img: "https://media1.tenor.com/images/6f23e425014383a0a1a017b2b638d0e0/tenor.gif?itemid=14197061" },
@@ -141,7 +126,7 @@
             { name: "Triceps Dip", img: "https://media.tenor.com/S-YJBYpQ-SIAAAAC/tricep-dips.gif" },
             { name: "Plank", img: "https://media.tenor.com/GgP-i2-gM-QAAAAC/plank-planking.gif" },
             { name: "High Knees", img: "https://media.tenor.com/NnBClnJza8AAAAAC/high-knees.gif" },
-            { name: "Lunge", img: "https://media.tenor.com/NnBClnJza8AAAAAC/high-knees.gif" },
+            { name: "Lunge", img: "https://media.tenor.com/NnBClnJza8AAAAAC/high-knees.gif" }, // NOG STEEDS DEZELFDE GIF ALS HIGH KNEES
             { name: "Push-up & Rotatie", img: "https://media.tenor.com/T0NIuMefnF0AAAAC/push-up-rotation.gif" },
             { name: "Side Plank (Links)", img: "https://media.tenor.com/0oQ_tHjA-S0AAAAC/side-plank.gif" },
             { name: "Side Plank (Rechts)", img: "https://media.tenor.com/0oQ_tHjA-S0AAAAC/side-plank.gif" },
@@ -154,15 +139,14 @@
             { name: "Superman", img: "https://media.tenor.com/iV2mZeMr1b0AAAAC/superman-exercise.gif" }
         ];
 
-        // App-status variabelen
-        let selectedExercises = [...ALL_EXERCISES]; // Standaard alle oefeningen
+        let selectedExercises = [...ALL_EXERCISES];
         let currentExerciseIndex = 0;
         let currentTime = EXERCISE_DURATION;
         let isResting = false;
         let isPaused = true;
         let timerInterval = null;
         
-        // --- 2. AUDIO CONTEXT (voor bliepjes zonder .mp3) ---
+        // --- 2. AUDIO CONTEXT ---
         let audioCtx;
         try {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -172,6 +156,11 @@
 
         const playBeep = (freq = 520, duration = 150, type = 'square') => {
             if (!audioCtx) return;
+            // Zorg ervoor dat de context actief is (na gebruikersinteractie)
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
             const oscillator = audioCtx.createOscillator();
             const gainNode = audioCtx.createGain();
             oscillator.connect(gainNode);
@@ -188,8 +177,8 @@
             oscillator.stop(audioCtx.currentTime + (duration / 1000));
         };
 
-        const startBeep = () => playBeep(880, 150, 'triangle'); // Hogere 'start' bliep
-        const restBeep = () => playBeep(440, 300, 'sine'); // Lagere 'rust' bliep
+        const startBeep = () => playBeep(880, 150, 'triangle');
+        const restBeep = () => playBeep(440, 300, 'sine');
         const finalBeep = () => { playBeep(980, 150); setTimeout(() => playBeep(980, 150), 200); setTimeout(() => playBeep(980, 150), 400); };
 
         // --- SPRAAK SYNTHESE ---
@@ -197,35 +186,28 @@
         let voices = [];
 
         function loadVoices() {
-            // Laad de stemmen die beschikbaar zijn in de browser
-            voices = synth.getVoices().filter(v => v.lang.startsWith('nl')); // Filter op NL
+            voices = synth.getVoices().filter(v => v.lang.startsWith('nl'));
             if (voices.length === 0) {
-                // Fallback als er geen NL stem is
                 voices = synth.getVoices().filter(v => v.lang.startsWith('en')); 
             }
         }
         
-        // Het laden van stemmen kan even duren, dus we laden ze wanneer ze veranderen
         if (synth.onvoiceschanged !== undefined) {
             synth.onvoiceschanged = loadVoices;
         }
-        loadVoices(); // Probeer direct te laden
+        loadVoices();
 
         function speak(text) {
-            if (!synth || !text) return; // Veiligheidcheck
-
-            // Stop eventuele vorige spraak om overlap te voorkomen
+            if (!synth || !text) return;
             synth.cancel();
 
             const utterance = new SpeechSynthesisUtterance(text);
-            
-            // Probeer een Nederlandse stem te vinden
             let voice = voices.find(v => v.lang === 'nl-NL');
             if (!voice) {
                 voice = voices.find(v => v.lang.startsWith('nl'));
             }
             
-            utterance.voice = voice || null; // Gebruik NL stem of val terug op standaard
+            utterance.voice = voice || null;
             utterance.lang = voice ? voice.lang : 'nl-NL';
             utterance.pitch = 1;
             utterance.rate = 1;
@@ -242,7 +224,6 @@
         const settingsBtn = document.getElementById('settings-btn');
         const mediaContainer = document.getElementById('media-container');
 
-        // Modal DOM
         const settingsModal = document.getElementById('settings-modal');
         const modalCloseBtn = document.getElementById('modal-close-btn');
         const modalSaveBtn = document.getElementById('modal-save-btn');
@@ -250,24 +231,64 @@
 
         // --- 4. KERNFUNCTIES ---
 
-        function updateDisplay() {
-            // Update timer
-            timerDisplay.textContent = String(currentTime).padStart(2, '0');
-
-            // Update media (Video of GIF)
-            let currentMediaUrl = '';
+        function renderMedia(mediaUrl) {
+            const newMediaId = 'media-' + mediaUrl;
             
+            // Optimalisatie: render alleen als het nog niet het juiste element is
+            if (mediaContainer.children[0] && mediaContainer.children[0].id === newMediaId) {
+                // Als het een video is, zorg dat hij speelt (voor het geval de 'loop' faalde)
+                if (mediaContainer.children[0].tagName === 'VIDEO') {
+                    mediaContainer.children[0].play().catch(e => console.warn("Afspelen video mislukt (waarschijnlijk al bezig)", e.message));
+                }
+                return; // Media is al correct, doe niets
+            }
+
+            mediaContainer.innerHTML = ''; // Wis vorige media
+            if (!mediaUrl) return; // Geen media om te tonen (bijv. tijdens rust)
+
+            let mediaElement;
+            if (mediaUrl.endsWith('.mp4')) {
+                // --- Maak een video element ---
+                mediaElement = document.createElement('video');
+                mediaElement.src = mediaUrl;
+                mediaElement.autoplay = true;
+                mediaElement.muted = true; // Autoplay vereist 'muted'
+                mediaElement.loop = true;
+                mediaElement.playsInline = true; // Belangrijk voor iOS
+                
+                // Probeer expliciet af te spelen om browser-regels te omzeilen
+                mediaElement.addEventListener('canplay', () => {
+                    mediaElement.play().catch(error => {
+                        console.warn('Video autoplay is mislukt (probeer opnieuw bij start):', error.message);
+                        // Soms blokkeert de browser, de startknop lost dit meestal op.
+                    });
+                });
+                
+            } else {
+                // --- Maak een img element voor GIFs ---
+                mediaElement = document.createElement('img');
+                mediaElement.src = mediaUrl;
+            }
+            
+            mediaElement.id = newMediaId;
+            mediaElement.className = 'w-full h-full object-cover';
+            mediaContainer.appendChild(mediaElement);
+        }
+
+        function updateDisplay() {
+            timerDisplay.textContent = String(currentTime).padStart(2, '0');
+            
+            let currentMediaUrl = '';
+
             if (isResting) {
                 statusDisplay.textContent = "RUST";
                 statusDisplay.classList.remove('text-cyan-400');
                 statusDisplay.classList.add('text-yellow-400');
-                mediaContainer.innerHTML = ''; // Leeg media tijdens rust
                 
-                // Set "Volgende"
+                // Toon de VOLGENDE oefening tijdens rust
                 if (currentExerciseIndex < selectedExercises.length) {
                     currentMediaUrl = selectedExercises[currentExerciseIndex].img;
                 }
-                
             } else {
                 // Huidige oefening
                 const currentExercise = selectedExercises[currentExerciseIndex];
@@ -277,6 +298,9 @@
                 
                 currentMediaUrl = currentExercise.img;
             }
+            
+            // Render de media
+            renderMedia(currentMediaUrl);
 
             // Update "Volgende" tekst
             if (currentExerciseIndex + 1 < selectedExercises.length) {
@@ -285,36 +309,6 @@
                 nextExercise.textContent = "Laatste ronde!";
             } else {
                 nextExercise.textContent = "Geen";
-            }
-            
-            // Render de media (Video of GIF)
-            // We doen dit alleen als het media-element er nog niet is
-            const activeMedia = mediaContainer.children[0];
-            const newMediaId = 'media-' + currentMediaUrl;
-
-            if (!activeMedia || activeMedia.id !== newMediaId) {
-                mediaContainer.innerHTML = ''; // Wis vorige media
-                
-                if (currentMediaUrl) {
-                    let mediaElement;
-                    if (currentMediaUrl.endsWith('.mp4')) {
-                        // Maak een video element
-                        mediaElement = document.createElement('video');
-                        mediaElement.src = currentMediaUrl;
-                        mediaElement.autoplay = true;
-                        mediaElement.muted = true; // Autoplay vereist 'muted'
-                        mediaElement.loop = true;
-                        mediaElement.playsInline = true; // Belangrijk voor iOS
-                    } else {
-                        // Maak een img element voor GIFs
-                        mediaElement = document.createElement('img');
-                        mediaElement.src = currentMediaUrl;
-                    }
-                    
-                    mediaElement.id = newMediaId;
-                    mediaElement.className = 'w-full h-full object-cover';
-                    mediaContainer.appendChild(mediaElement);
-                }
             }
         }
 
@@ -333,16 +327,13 @@
 
             currentTime--;
 
-            // Timer-overgang
             if (currentTime < 0) {
                 if (isResting) {
                     // Rust is voorbij, start volgende oefening
                     isResting = false;
                     currentTime = EXERCISE_DURATION;
                     startBeep();
-                    // --- SPRAAK: Annonceer oefening ---
                     speak(selectedExercises[currentExerciseIndex].name);
-                    // --- EINDE SPRAAK ---
                 } else {
                     // Oefening is voorbij, start rust
                     isResting = true;
@@ -350,15 +341,11 @@
                     currentExerciseIndex++;
                     restBeep();
 
-                    // Check of workout klaar is
-                    // Gebruik nu 'selectedExercises'
                     if (currentExerciseIndex >= selectedExercises.length) {
                         finishWorkout();
                         return;
                     } else {
-                        // --- SPRAAK: Annonceer rust ---
                         speak("Rust");
-                        // --- EINDE SPRAAK ---
                     }
                 }
             }
@@ -366,18 +353,21 @@
         }
 
         function startWorkout() {
-            if (selectedExercises.length === 0) return; // Niet starten zonder oefeningen
+            if (selectedExercises.length === 0) return;
             
             isPaused = false;
             startPauseBtn.textContent = "Pauze";
             startBeep();
             
-            // --- SPRAAK: Annonceer eerste oefening ---
-            // Alleen als we echt aan het begin staan
+            // Forceer de video om te spelen (lost autoplay-problemen op)
+            const video = mediaContainer.querySelector('video');
+            if (video) {
+                video.play().catch(e => console.warn("Kon video niet starten:", e.message));
+            }
+
             if (currentExerciseIndex === 0 && !isResting && currentTime === EXERCISE_DURATION) {
                 speak(selectedExercises[0].name);
             }
-            // --- EINDE SPRAAK ---
 
             timerInterval = setInterval(timerTick, 1000);
             updateDisplay();
@@ -401,17 +391,14 @@
             startPauseBtn.textContent = "Start";
             startPauseBtn.disabled = true; 
             statusDisplay.classList.add('text-cyan-400');
+            renderMedia(''); // Wis media
             finalBeep();
-            // --- SPRAAK: Workout compleet ---
             speak("Goed gedaan! Workout compleet.");
-            // --- EINDE SPRAAK ---
         }
 
         function resetWorkout() {
-            // --- SPRAAK: Stop alle spraak ---
             if (synth) synth.cancel();
-            // --- EINDE SPRAAK ---
-
+            
             clearInterval(timerInterval);
             timerInterval = null;
             currentExerciseIndex = 0;
@@ -421,37 +408,21 @@
             
             startPauseBtn.textContent = "Start";
             
-            // Update UI op basis van geselecteerde oefeningen
             if (selectedExercises.length > 0) {
                 startPauseBtn.disabled = false;
                 timerDisplay.textContent = String(EXERCISE_DURATION).padStart(2, '0');
+                
                 // Laad de media van de eerste oefening
-                const firstMedia = selectedExercises[0].img;
-                mediaContainer.innerHTML = ''; // Wis
-                let mediaElement;
-                if (firstMedia.endsWith('.mp4')) {
-                    mediaElement = document.createElement('video');
-                    mediaElement.src = firstMedia;
-                    mediaElement.muted = true;
-                    mediaElement.loop = true;
-                    mediaElement.playsInline = true;
-                } else {
-                    mediaElement = document.createElement('img');
-                    mediaElement.src = firstMedia;
-                }
-                mediaElement.id = 'media-' + firstMedia;
-                mediaElement.className = 'w-full h-full object-cover';
-                mediaContainer.appendChild(mediaElement);
+                renderMedia(selectedExercises[0].img);
                 
                 statusDisplay.textContent = selectedExercises[0].name.toUpperCase();
                 nextExercise.textContent = selectedExercises.length > 1 ? selectedExercises[1].name : "Geen";
             } else {
-                // Geen oefeningen geselecteerd
                 startPauseBtn.disabled = true;
                 timerDisplay.textContent = "00";
                 statusDisplay.textContent = "Kies oefeningen!";
                 nextExercise.textContent = "Geen";
-                mediaContainer.innerHTML = '';
+                renderMedia('');
             }
             
             statusDisplay.classList.remove('text-yellow-400');
@@ -461,16 +432,15 @@
         // --- 5. MODAL FUNCTIES ---
 
         function populateModal() {
-            exerciseList.innerHTML = ''; // Leeg de lijst
+            exerciseList.innerHTML = '';
             
             ALL_EXERCISES.forEach(exercise => {
                 const isSelected = selectedExercises.some(sel => sel.name === exercise.name);
                 
                 const btn = document.createElement('button');
                 btn.textContent = exercise.name;
-                btn.dataset.name = exercise.name; // Sla de naam op in data-attribuut
+                btn.dataset.name = exercise.name;
                 
-                // Stijl op basis van selectie
                 btn.className = 'w-full text-left font-semibold py-3 px-4 rounded-lg transition-colors duration-200';
                 if (isSelected) {
                     btn.classList.add('bg-cyan-500', 'text-gray-900');
@@ -478,7 +448,6 @@
                     btn.classList.add('bg-gray-700', 'hover:bg-gray-600', 'text-white');
                 }
                 
-                // Toggle functionaliteit
                 btn.addEventListener('click', () => {
                     btn.classList.toggle('bg-cyan-500');
                     btn.classList.toggle('text-gray-900');
@@ -496,9 +465,7 @@
             const buttons = exerciseList.querySelectorAll('button');
             
             buttons.forEach(btn => {
-                // Als de knop de "geselecteerd" stijl heeft
                 if (btn.classList.contains('bg-cyan-500')) {
-                    // Zoek de volledige oefening-data in de ALL_EXERCISES lijst
                     const exerciseData = ALL_EXERCISES.find(ex => ex.name === btn.dataset.name);
                     if (exerciseData) {
                         newSelectedExercises.push(exerciseData);
@@ -511,15 +478,14 @@
 
         // --- 6. EVENT LISTENERS ---
         startPauseBtn.addEventListener('click', () => {
+            // Dit is de cruciale "user interactie" die audio toestaat
             if (audioCtx && audioCtx.state === 'suspended') {
-                audioCtx.resume(); // Belangrijk voor browsers die audio auto-play blokkeren
+                audioCtx.resume(); 
             }
             
-            // --- SPRAAK: Resume context (nodig in sommige browsers) ---
             if (synth && synth.paused) {
                 synth.resume();
             }
-            // --- EINDE SPRAAK ---
             
             if (isPaused) {
                 startWorkout();
@@ -530,9 +496,8 @@
 
         resetBtn.addEventListener('click', resetWorkout);
 
-        // Modal event listeners
         settingsBtn.addEventListener('click', () => {
-            populateModal(); // Vul de modal met de *huidige* selectie
+            populateModal();
             settingsModal.classList.remove('hidden');
         });
 
@@ -541,18 +506,16 @@
         });
 
         modalSaveBtn.addEventListener('click', () => {
-            updateSelectedExercisesFromModal(); // Sla de nieuwe selectie op
+            updateSelectedExercisesFromModal();
             settingsModal.classList.add('hidden');
-            resetWorkout(); // Reset de timer met de nieuwe selectie
+            resetWorkout();
         });
 
 
         // --- 7. INITIALISATIE ---
-        // Initialiseer de app bij laden
         resetWorkout();
 
         // --- SERVICE WORKER REGISTRATIE ---
-        // Dit script registreert de service-worker voor offline functionaliteit
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('service-worker.js')
