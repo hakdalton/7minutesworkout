@@ -4,6 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>7 Minuten Workout Timer</title>
+    
+    <!-- --- NIEUWE PWA TAGS --- -->
+    <!-- Link naar het Manifest bestand -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Thema kleur voor de browser UI (vooral op Android) -->
+    <meta name="theme-color" content="#1f2937"> <!-- bg-gray-800 -->
+    
+    <!-- iOS specifieke tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="7 Min Workout">
+    
+    <!-- Placeholder icoon voor Apple (maak deze zelf en upload ze) -->
+    <link rel="apple-touch-icon" href="https://placehold.co/180x180/22d3ee/1f2937?text=7M">
+    <!-- --- EINDE NIEUWE PWA TAGS --- -->
+    
     <!-- Laad Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -497,6 +514,22 @@
 
         // Initialiseer de app bij laden
         resetWorkout();
+
+        // --- NIEUW: SERVICE WORKER REGISTRATIE ---
+        // Dit script registreert de service-worker voor offline functionaliteit
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(registration => {
+                        console.log('Service Worker geregistreerd:', registration);
+                    })
+                    .catch(error => {
+                        console.log('Service Worker registratie mislukt:', error);
+                    });
+            });
+        }
+        // --- EINDE NIEUW SCRIPT ---
+
     </script>
 </body>
 </html>
