@@ -3,645 +3,500 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workout Timer</title>
+    <title>7 Minuten Workout Timer</title>
+    <!-- Laad Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background-color: #000;
-            color: #fff;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 600px;
-        }
-
-        .screen {
-            display: none;
-        }
-
-        .screen.active {
-            display: block;
-        }
-
-        h1 {
-            text-align: center;
-            font-size: 2em;
-            margin-bottom: 30px;
-            font-weight: 300;
-            letter-spacing: 2px;
-        }
-
-        /* Mode Selection */
-        .mode-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .mode-btn {
-            background: #1a1a1a;
-            border: 2px solid #333;
-            color: #fff;
-            padding: 40px 20px;
-            font-size: 1.3em;
-            font-weight: 600;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .mode-btn:hover {
-            background: #2a2a2a;
-            border-color: #fff;
-            transform: translateY(-2px);
-        }
-
-        .mode-btn:active {
-            transform: translateY(0);
-        }
-
-        /* Setup Screen */
-        .setup-content {
-            text-align: center;
-        }
-
-        .setup-group {
-            margin: 30px 0;
-        }
-
-        .setup-label {
-            font-size: 1.2em;
-            margin-bottom: 15px;
-            color: #aaa;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .setup-controls {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .setup-value {
-            font-size: 3em;
-            font-weight: 300;
-            min-width: 150px;
-        }
-
-        .setup-btn {
-            background: #1a1a1a;
-            border: 2px solid #333;
-            color: #fff;
-            width: 60px;
-            height: 60px;
-            font-size: 2em;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .setup-btn:hover {
-            background: #2a2a2a;
-            border-color: #fff;
-        }
-
-        .setup-btn:active {
-            transform: scale(0.95);
-        }
-
-        .start-workout-btn {
-            background: #fff;
-            color: #000;
-            border: none;
-            padding: 20px 60px;
-            font-size: 1.5em;
-            font-weight: 700;
-            border-radius: 50px;
-            cursor: pointer;
-            margin-top: 40px;
-            transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .start-workout-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
-        }
-
-        .back-btn {
-            background: transparent;
-            border: 2px solid #333;
-            color: #666;
-            padding: 12px 30px;
-            font-size: 1em;
-            border-radius: 25px;
-            cursor: pointer;
-            margin-top: 20px;
-            transition: all 0.3s;
-        }
-
-        .back-btn:hover {
-            border-color: #fff;
-            color: #fff;
-        }
-
-        /* Timer Screen */
-        .timer-display {
-            text-align: center;
-            margin: 50px 0;
-        }
-
-        .timer-mode-label {
-            font-size: 1.5em;
-            color: #666;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-        }
-
-        .timer-main {
-            font-size: 8em;
-            font-weight: 300;
-            line-height: 1;
-            margin: 30px 0;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .timer-sub {
-            font-size: 2em;
-            color: #666;
-            margin-top: 20px;
-        }
-
-        .timer-phase {
-            font-size: 2.5em;
-            color: #4a4;
-            margin: 20px 0;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .timer-phase.rest {
-            color: #a44;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background: #1a1a1a;
-            border-radius: 3px;
-            overflow: hidden;
-            margin: 30px 0;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: #fff;
-            transition: width 0.3s ease;
-        }
-
-        .timer-controls {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 40px;
-        }
-
-        .control-btn {
-            background: #1a1a1a;
-            border: 2px solid #333;
-            color: #fff;
-            padding: 18px 45px;
-            font-size: 1.2em;
-            font-weight: 600;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .control-btn:hover {
-            background: #2a2a2a;
-            border-color: #fff;
-        }
-
-        .control-btn.primary {
-            background: #fff;
-            color: #000;
-        }
-
-        .control-btn.primary:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
-        }
-
-        .control-btn:active {
-            transform: scale(0.98);
-        }
-
-        /* Responsive */
-        @media (max-width: 600px) {
-            .timer-main {
-                font-size: 5em;
-            }
-
-            .mode-btn {
-                padding: 30px 15px;
-                font-size: 1.1em;
-            }
-
-            .setup-value {
-                font-size: 2.5em;
-                min-width: 120px;
-            }
-
-            .control-btn {
-                padding: 15px 30px;
-                font-size: 1em;
-            }
-        }
-
-        /* Animations */
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        .timer-main.pulsing {
-            animation: pulse 1s infinite;
+        /* Voeg een aangepast lettertype toe voor een 'digitale' look van de timer */
+        @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@700&display=swap');
+        .timer-font {
+            font-family: 'Chakra Petch', sans-serif;
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <!-- Mode Selection Screen -->
-        <div id="modeScreen" class="screen active">
-            <h1>WORKOUT TIMER</h1>
-            <div class="mode-grid">
-                <button class="mode-btn" onclick="selectMode('amrap')">AMRAP</button>
-                <button class="mode-btn" onclick="selectMode('fortime')">FOR TIME</button>
-                <button class="mode-btn" onclick="selectMode('emom')">EMOM</button>
-                <button class="mode-btn" onclick="selectMode('tabata')">TABATA</button>
-            </div>
-            <div class="mode-grid" style="grid-template-columns: 1fr;">
-                <button class="mode-btn" onclick="selectMode('stopwatch')">STOPWATCH</button>
-            </div>
+<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen font-sans">
+
+    <div class="w-full max-w-lg p-6 bg-gray-800 rounded-2xl shadow-2xl text-center">
+        <h1 class="text-3xl font-bold mb-4 text-cyan-400">7 Minuten Workout</h1>
+
+        <!-- Status & Timer Display -->
+        <div id="status-display" class="text-6xl font-bold mb-2 text-yellow-400 uppercase tracking-wider">
+            Klaar?
+        </div>
+        <div id="timer-display" class="text-9xl font-bold mb-4 timer-font text-white">
+            00:30
         </div>
 
-        <!-- Setup Screen -->
-        <div id="setupScreen" class="screen">
-            <h1 id="setupTitle">SETUP</h1>
-            <div class="setup-content" id="setupContent"></div>
+        <!-- Exercise Display -->
+        <div class="bg-gray-700 p-4 rounded-lg mb-4">
+            <h2 id="exercise-name" class="text-4xl font-semibold mb-3 truncate">
+                Selecteer Start
+            </h2>
+            <!-- Afbeelding - We gebruiken placeholders van placehold.co -->
+            <img id="exercise-image" 
+                 src="https://placehold.co/600x400/374151/FFFFFF?text=Workout+App" 
+                 alt="Huidige oefening" 
+                 class="w-full h-64 object-cover rounded-lg bg-gray-600">
         </div>
 
-        <!-- Timer Screen -->
-        <div id="timerScreen" class="screen">
-            <div class="timer-display">
-                <div class="timer-mode-label" id="timerModeLabel"></div>
-                <div class="progress-bar" id="progressBar" style="display: none;">
-                    <div class="progress-fill" id="progressFill"></div>
-                </div>
-                <div class="timer-phase" id="timerPhase"></div>
-                <div class="timer-main" id="timerMain">00:00</div>
-                <div class="timer-sub" id="timerSub"></div>
+        <!-- Next Exercise -->
+        <div class="mb-6">
+            <span class="text-gray-400">Volgende:</span>
+            <span id="next-exercise-name" class="text-xl font-medium text-gray-200">Jumping Jacks</span>
+        </div>
+
+        <!-- Controls -->
+        <div class="flex justify-center space-x-4">
+            <button id="start-pause-btn" class="bg-cyan-500 hover:bg-cyan-400 text-gray-900 font-bold py-3 px-8 rounded-full text-lg uppercase shadow-lg transition duration-300">
+                Start
+            </button>
+            <button id="reset-btn" class="bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 px-8 rounded-full text-lg uppercase shadow-lg transition duration-300">
+                Reset
+            </button>
+            <!-- Nieuwe "Instellingen" knop -->
+            <button id="settings-btn" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-8 rounded-full text-lg uppercase shadow-lg transition duration-300">
+                Kies
+            </button>
+        </div>
+    </div>
+
+    <!-- Nieuwe Instellingen Modal -->
+    <div id="settings-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 hidden">
+        <div class="bg-gray-800 w-full max-w-md p-6 rounded-2xl shadow-2xl">
+            <h2 class="text-2xl font-bold mb-4 text-cyan-400">Kies je Oefeningen</h2>
+            <!-- De lijst is nu een flex container voor de knoppen -->
+            <div id="exercise-list" class="max-h-64 overflow-y-auto flex flex-wrap gap-2 mb-6 pr-2">
+                <!-- Oefeningen worden hier door JS ingeladen -->
             </div>
-            <div class="timer-controls">
-                <button class="control-btn" onclick="resetTimer()">RESET</button>
-                <button class="control-btn primary" id="startPauseBtn" onclick="toggleTimer()">START</button>
+            <div class="flex justify-end">
+                <button id="save-settings-btn" class="bg-cyan-500 hover:bg-cyan-400 text-gray-900 font-bold py-2 px-6 rounded-full text-lg uppercase">
+                    Opslaan
+                </button>
             </div>
         </div>
     </div>
 
     <script>
-        let currentMode = '';
-        let timerInterval = null;
-        let isRunning = false;
-        let elapsed = 0;
-        let workoutSettings = {};
-        let currentRound = 1;
-        let currentInterval = 1;
-        let isWorkPhase = true;
-        let audioContext = null;
+        // --- 1. DATA: DE OEFENINGEN ---
+        // We gebruiken placehold.co voor afbeeldingen. Vervang deze URL's later!
+        const EXERCISE_DURATION = 30; // 30 seconden
+        const REST_DURATION = 10; // 10 seconden
 
-        // Initialize audio context for beeps
-        function initAudio() {
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            }
+        const ALL_EXERCISES = [
+            { name: "Jumping Jacks", img: "https://media.giphy.com/media/t8eCAL82ZTE4w/giphy.gif" },
+            { name: "Wall Sit", img: "https://www.spotebi.com/wp-content/uploads/2014/10/wall-sit-exercise-illustration.gif" },
+            { name: "Push-up", img: "https://media1.giphy.com/media/W2coT9v4e9P3g314U4/giphy.gif" },
+            // --- HIER ZIJN DE NIEUWE GIFS ---
+            { name: "Abdominal Crunch", img: "https://media.giphy.com/media/l4hLA47nSjmhZ0gBq/giphy.gif" },
+            { name: "Step-Up", img: "https://www.spotebi.com/wp-content/uploads/2015/02/step-up-exercise-illustration.gif" },
+            { name: "Squat", img: "https://media.giphy.com/media/l3q2wgnU3A93s534A/giphy.gif" },
+            { name: "Triceps Dip", img: "https://www.spotebi.com/wp-content/uploads/2014/10/triceps-dips-exercise-illustration.gif" },
+            { name: "Plank", img: "https://media.giphy.com/media/l41lIOPR2i80F1CJa/giphy.gif" },
+            { name: "High Knees", img: "https://www.spotebi.com/wp-content/uploads/2015/03/high-knees-exercise-illustration.gif" },
+            { name: "Lunge", img: "https://www.spotebi.com/wp-content/uploads/2014/10/lunges-exercise-illustration.gif" },
+            { name: "Push-up & Rotation", img: "https://www.spotebi.com/wp-content/uploads/2014/10/push-up-rotation-exercise-illustration.gif" },
+            { name: "Side Plank (L)", img: "https://www.spotebi.com/wp-content/uploads/2014/10/side-plank-exercise-illustration.gif" },
+            { name: "Side Plank (R)", img: "https://www.spotebi.com/wp-content/uploads/2014/10/side-plank-exercise-illustration.gif" }, // Gebruikt dezelfde, gebruiker wisselt zelf van kant
+            // --- NIEUWE OEFENINGEN (NU MET GIFS) ---
+            { name: "Glute Bridge", img: "https://www.spotebi.com/wp-content/uploads/2014/10/glute-bridge-exercise-illustration.gif" },
+            { name: "Bicycle Crunches", img: "https://media.giphy.com/media/l4FGkXgUqjAvnB90A/giphy.gif" },
+            { name: "Mountain Climbers", img: "https://www.spotebi.com/wp-content/uploads/2014/10/mountain-climbers-exercise-illustration.gif" },
+            { name: "Leg Raises", img: "https://www.spotebi.com/wp-content/uploads/2014/10/leg-raises-exercise-illustration.gif" },
+            { name: "Burpees", img: "https://media.giphy.com/media/2W3nQ9s1RkKAw/giphy.gif" },
+            { name: "Bird-dog", img: "https://www.spotebi.com/wp-content/uploads/2014/10/bird-dog-exercise-illustration.gif" },
+            { name: "Superman", img: "https://www.spotebi.com/wp-content/uploads/2014/10/superman-exercise-illustration.gif" }
+            // --- EINDE NIEUWE OEFENINGEN ---
+        ];
+
+        // --- 2. AUDIO CONTEXT (voor bliepjes zonder .mp3) ---
+        let audioCtx;
+        try {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        } catch (e) {
+            console.warn("Web Audio API is not supported in this browser");
         }
+        
+        function playBeep(frequency, duration, type = 'sine') {
+            if (!audioCtx) return;
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
 
-        function beep(duration = 100, frequency = 800) {
-            if (!audioContext) initAudio();
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-            
             oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            
-            oscillator.frequency.value = frequency;
-            oscillator.type = 'sine';
-            
-            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration / 1000);
-            
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + duration / 1000);
-        }
+            gainNode.connect(audioCtx.destination);
 
-        function showScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-        }
+            oscillator.type = type;
+            oscillator.frequency.setValueAtTime(frequency, audioCtx.currentTime);
 
-        function selectMode(mode) {
-            currentMode = mode;
-            showSetupScreen();
+            oscillator.start();
+            gainNode.gain.setValueAtTime(1, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + (duration / 1000));
+            oscillator.stop(audioCtx.currentTime + (duration / 1000));
         }
+        
+        const startBeep = () => playBeep(880, 200, 'triangle'); // Hogere 'start' bliep
+        const restBeep = () => playBeep(440, 300, 'sine'); // Lagere 'rust' bliep
+        const finalBeep = () => { playBeep(980, 150); setTimeout(() => playBeep(980, 150), 200); setTimeout(() => playBeep(980, 150), 400); };
 
-        function showSetupScreen() {
-            const setupContent = document.getElementById('setupContent');
-            const setupTitle = document.getElementById('setupTitle');
+        // --- NIEUW: SPRAAK SYNTHESE ---
+        const synth = window.speechSynthesis;
+        let voices = [];
+
+        function loadVoices() {
+            // Laad de stemmen die beschikbaar zijn in de browser
+            voices = synth.getVoices().filter(v => v.lang.startsWith('nl')); // Filter op NL
+            if (voices.length === 0) {
+                // Fallback als er geen NL stem is
+                voices = synth.getVoices().filter(v => v.lang.startsWith('en')); 
+            }
+        }
+        
+        // Het laden van stemmen kan even duren, dus we laden ze wanneer ze veranderen
+        if (synth.onvoiceschanged !== undefined) {
+            synth.onvoiceschanged = loadVoices;
+        }
+        loadVoices(); // Probeer direct te laden
+
+        function speak(text) {
+            if (!synth || !text) return; // Veiligheidcheck
+
+            // Stop eventuele vorige spraak om overlap te voorkomen
+            synth.cancel();
+
+            const utterance = new SpeechSynthesisUtterance(text);
             
-            let html = '';
-            
-            switch(currentMode) {
-                case 'amrap':
-                    setupTitle.textContent = 'AMRAP SETUP';
-                    html = `
-                        <div class="setup-group">
-                            <div class="setup-label">Minuten</div>
-                            <div class="setup-controls">
-                                <button class="setup-btn" onclick="adjustValue('minutes', -1)">-</button>
-                                <div class="setup-value" id="minutes">10</div>
-                                <button class="setup-btn" onclick="adjustValue('minutes', 1)">+</button>
-                            </div>
-                        </div>
-                    `;
-                    workoutSettings = { minutes: 10 };
-                    break;
-                    
-                case 'fortime':
-                    setupTitle.textContent = 'FOR TIME SETUP';
-                    html = `
-                        <div class="setup-group">
-                            <div class="setup-label">Start de stopwatch</div>
-                        </div>
-                    `;
-                    workoutSettings = {};
-                    break;
-                    
-                case 'emom':
-                    setupTitle.textContent = 'EMOM SETUP';
-                    html = `
-                        <div class="setup-group">
-                            <div class="setup-label">Minuten</div>
-                            <div class="setup-controls">
-                                <button class="setup-btn" onclick="adjustValue('minutes', -1)">-</button>
-                                <div class="setup-value" id="minutes">10</div>
-                                <button class="setup-btn" onclick="adjustValue('minutes', 1)">+</button>
-                            </div>
-                        </div>
-                    `;
-                    workoutSettings = { minutes: 10 };
-                    break;
-                    
-                case 'tabata':
-                    setupTitle.textContent = 'TABATA SETUP';
-                    html = `
-                        <div class="setup-group">
-                            <div class="setup-label">Rounds</div>
-                            <div class="setup-controls">
-                                <button class="setup-btn" onclick="adjustValue('rounds', -1)">-</button>
-                                <div class="setup-value" id="rounds">8</div>
-                                <button class="setup-btn" onclick="adjustValue('rounds', 1)">+</button>
-                            </div>
-                        </div>
-                    `;
-                    workoutSettings = { rounds: 8 };
-                    break;
-                    
-                case 'stopwatch':
-                    setupTitle.textContent = 'STOPWATCH';
-                    html = `
-                        <div class="setup-group">
-                            <div class="setup-label">Vrije stopwatch</div>
-                        </div>
-                    `;
-                    workoutSettings = {};
-                    break;
+            // Probeer een Nederlandse stem te vinden
+            let voice = voices.find(v => v.lang === 'nl-NL');
+            if (!voice) {
+                voice = voices.find(v => v.lang.startsWith('nl'));
             }
             
-            html += `
-                <button class="start-workout-btn" onclick="startWorkout()">START</button>
-                <button class="back-btn" onclick="showScreen('modeScreen')">Terug</button>
-            `;
+            utterance.voice = voice || null; // Gebruik NL stem of val terug op standaard
+            utterance.lang = voice ? voice.lang : 'nl-NL';
+            utterance.pitch = 1;
+            utterance.rate = 1;
             
-            setupContent.innerHTML = html;
-            showScreen('setupScreen');
+            synth.speak(utterance);
+        }
+        // --- EINDE NIEUWE CODE ---
+
+
+        // --- 3. DOM ELEMENTEN ---
+        const timerDisplay = document.getElementById('timer-display');
+        const statusDisplay = document.getElementById('status-display');
+        const exerciseName = document.getElementById('exercise-name');
+        const exerciseImage = document.getElementById('exercise-image');
+        const nextExerciseName = document.getElementById('next-exercise-name');
+        const startPauseBtn = document.getElementById('start-pause-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        // Nieuwe modal elementen
+        const settingsBtn = document.getElementById('settings-btn');
+        const settingsModal = document.getElementById('settings-modal');
+        const saveSettingsBtn = document.getElementById('save-settings-btn');
+        const exerciseListContainer = document.getElementById('exercise-list');
+
+
+        // --- 4. APP STATE (Status) ---
+        let selectedExercises = [...ALL_EXERCISES]; // Standaard alle oefeningen
+        let currentExerciseIndex = 0;
+        let isResting = false;
+        let isPaused = true;
+        let timerInterval = null;
+        let currentTime = EXERCISE_DURATION;
+
+        // --- 5. CORE LOGICA ---
+        function updateDisplay() {
+            // Update timer
+            const minutes = Math.floor(currentTime / 60);
+            const seconds = currentTime % 60;
+            timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            
+            if (isPaused) {
+                statusDisplay.textContent = "Gepauzeerd";
+                statusDisplay.classList.remove('text-green-400', 'text-yellow-400');
+                statusDisplay.classList.add('text-gray-400');
+                return;
+            }
+
+            // Gebruik nu 'selectedExercises'
+            const currentExercise = selectedExercises[currentExerciseIndex];
+            
+            if (isResting) {
+                // Rustfase
+                statusDisplay.textContent = "Rust";
+                exerciseName.textContent = "Even rusten...";
+                exerciseImage.src = "https://placehold.co/600x400/374151/FFFFFF?text=Rust";
+                statusDisplay.classList.remove('text-green-400', 'text-gray-400');
+                statusDisplay.classList.add('text-yellow-400');
+                timerDisplay.classList.remove('text-white');
+                timerDisplay.classList.add('text-yellow-400');
+
+                // Update 'volgende'
+                nextExerciseName.textContent = currentExercise.name;
+
+            } else {
+                // Oefeningfase
+                // Gebruik nu 'selectedExercises'
+                statusDisplay.textContent = `Oefening ${currentExerciseIndex + 1}/${selectedExercises.length}`;
+                exerciseName.textContent = currentExercise.name;
+                exerciseImage.src = currentExercise.img;
+                statusDisplay.classList.remove('text-yellow-400', 'text-gray-400');
+                statusDisplay.classList.add('text-green-400');
+                timerDisplay.classList.remove('text-yellow-400');
+                timerDisplay.classList.add('text-white');
+
+                // Update 'volgende'
+                const nextIndex = currentExerciseIndex + 1;
+                // Gebruik nu 'selectedExercises'
+                if (nextIndex < selectedExercises.length) {
+                    nextExerciseName.textContent = selectedExercises[nextIndex].name;
+                } else {
+                    nextExerciseName.textContent = "Laatste ronde!";
+                }
+            }
         }
 
-        function adjustValue(field, delta) {
-            const element = document.getElementById(field);
-            let value = parseInt(element.textContent);
-            value = Math.max(1, value + delta);
-            if (field === 'rounds' && value > 30) value = 30;
-            if (field === 'minutes' && value > 60) value = 60;
-            element.textContent = value;
-            workoutSettings[field] = value;
+        function timerTick() {
+            if (isPaused) return;
+
+            // --- SPRAAK: Aftellen ---
+            if (currentTime === 4) {
+                speak("3");
+            } else if (currentTime === 3) {
+                speak("2");
+            } else if (currentTime === 2) {
+                speak("1");
+            }
+            // --- EINDE SPRAAK ---
+
+            currentTime--;
+
+            // Timer-overgang
+            if (currentTime < 0) {
+                if (isResting) {
+                    // Rust is voorbij, start volgende oefening
+                    isResting = false;
+                    currentTime = EXERCISE_DURATION;
+                    startBeep();
+                    // --- SPRAAK: Annonceer oefening ---
+                    speak(selectedExercises[currentExerciseIndex].name);
+                    // --- EINDE SPRAAK ---
+                } else {
+                    // Oefening is voorbij, start rust
+                    isResting = true;
+                    currentTime = REST_DURATION;
+                    currentExerciseIndex++;
+                    restBeep();
+
+                    // Check of workout klaar is
+                    // Gebruik nu 'selectedExercises'
+                    if (currentExerciseIndex >= selectedExercises.length) {
+                        finishWorkout();
+                        return;
+                    } else {
+                        // --- SPRAAK: Annonceer rust ---
+                        speak("Rust");
+                        // --- EINDE SPRAAK ---
+                    }
+                }
+            }
+            updateDisplay();
         }
 
         function startWorkout() {
-            elapsed = 0;
-            currentRound = 1;
-            currentInterval = 1;
-            isWorkPhase = true;
-            isRunning = false;
-            
-            document.getElementById('timerModeLabel').textContent = currentMode.toUpperCase();
-            document.getElementById('startPauseBtn').textContent = 'START';
-            
-            showScreen('timerScreen');
-            updateTimerDisplay();
-        }
-
-        function formatTime(seconds) {
-            const mins = Math.floor(seconds / 60);
-            const secs = seconds % 60;
-            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-        }
-
-        function updateTimerDisplay() {
-            const mainDisplay = document.getElementById('timerMain');
-            const subDisplay = document.getElementById('timerSub');
-            const phaseDisplay = document.getElementById('timerPhase');
-            const progressBar = document.getElementById('progressBar');
-            const progressFill = document.getElementById('progressFill');
-            
-            switch(currentMode) {
-                case 'amrap':
-                    mainDisplay.textContent = formatTime(elapsed);
-                    subDisplay.textContent = `ROUND ${currentRound}`;
-                    phaseDisplay.textContent = '';
-                    
-                    const totalSeconds = workoutSettings.minutes * 60;
-                    const remaining = totalSeconds - elapsed;
-                    
-                    progressBar.style.display = 'block';
-                    progressFill.style.width = `${(elapsed / totalSeconds) * 100}%`;
-                    
-                    if (remaining <= 0 && isRunning) {
-                        pauseTimer();
-                        beep(500, 1000);
-                    }
-                    break;
-                    
-                case 'fortime':
-                case 'stopwatch':
-                    mainDisplay.textContent = formatTime(elapsed);
-                    subDisplay.textContent = '';
-                    phaseDisplay.textContent = '';
-                    progressBar.style.display = 'none';
-                    break;
-                    
-                case 'emom':
-                    const secondsInMinute = elapsed % 60;
-                    mainDisplay.textContent = formatTime(secondsInMinute);
-                    subDisplay.textContent = `Minuut ${currentInterval} / ${workoutSettings.minutes}`;
-                    phaseDisplay.textContent = '';
-                    
-                    progressBar.style.display = 'block';
-                    progressFill.style.width = `${(secondsInMinute / 60) * 100}%`;
-                    
-                    if (secondsInMinute === 0 && elapsed > 0 && elapsed < workoutSettings.minutes * 60) {
-                        beep(200, 1000);
-                        if (navigator.vibrate) navigator.vibrate(200);
-                    }
-                    
-                    if (elapsed >= workoutSettings.minutes * 60 && isRunning) {
-                        pauseTimer();
-                        beep(500, 1000);
-                    }
-                    break;
-                    
-                case 'tabata':
-                    const totalTabataTime = (20 + 10) * workoutSettings.rounds;
-                    const timeInCycle = elapsed % 30;
-                    
-                    if (timeInCycle < 20) {
-                        isWorkPhase = true;
-                        mainDisplay.textContent = formatTime(20 - timeInCycle);
-                        phaseDisplay.textContent = 'WORK';
-                        phaseDisplay.classList.remove('rest');
-                        progressBar.style.display = 'block';
-                        progressFill.style.width = `${(timeInCycle / 20) * 100}%`;
-                    } else {
-                        if (isWorkPhase) {
-                            beep(200, 600);
-                            if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-                        }
-                        isWorkPhase = false;
-                        mainDisplay.textContent = formatTime(30 - timeInCycle);
-                        phaseDisplay.textContent = 'REST';
-                        phaseDisplay.classList.add('rest');
-                        progressBar.style.display = 'block';
-                        progressFill.style.width = `${((timeInCycle - 20) / 10) * 100}%`;
-                    }
-                    
-                    currentRound = Math.floor(elapsed / 30) + 1;
-                    subDisplay.textContent = `Round ${Math.min(currentRound, workoutSettings.rounds)} / ${workoutSettings.rounds}`;
-                    
-                    if (elapsed >= totalTabataTime && isRunning) {
-                        pauseTimer();
-                        beep(500, 1000);
-                    }
-                    
-                    if (timeInCycle === 0 && elapsed > 0 && elapsed < totalTabataTime) {
-                        beep(300, 1000);
-                        if (navigator.vibrate) navigator.vibrate(300);
-                    }
-                    break;
+            // Check of er oefeningen zijn geselecteerd
+            if (selectedExercises.length === 0) {
+                exerciseName.textContent = "Kies oefeningen!";
+                statusDisplay.textContent = "Geen selectie";
+                startPauseBtn.disabled = true;
+                return; // Start niet
             }
-        }
 
-        function toggleTimer() {
-            initAudio();
-            if (isRunning) {
-                pauseTimer();
-            } else {
-                startTimer();
-            }
-        }
-
-        function startTimer() {
-            isRunning = true;
-            document.getElementById('startPauseBtn').textContent = 'PAUZE';
-            document.getElementById('timerMain').classList.remove('pulsing');
+            if (timerInterval) clearInterval(timerInterval); // Zorg dat er maar één timer loopt
+            isPaused = false;
+            startPauseBtn.textContent = "Pauze";
+            startBeep();
             
-            timerInterval = setInterval(() => {
-                elapsed++;
-                
-                if (currentMode === 'emom') {
-                    currentInterval = Math.floor(elapsed / 60) + 1;
-                }
-                
-                if (currentMode === 'amrap' && elapsed > 0 && elapsed % 60 === 0) {
-                    currentRound++;
-                }
-                
-                updateTimerDisplay();
-            }, 1000);
+            // --- SPRAAK: Annonceer eerste oefening ---
+            // Alleen als we echt aan het begin staan
+            if (currentExerciseIndex === 0 && !isResting && currentTime === EXERCISE_DURATION) {
+                speak(selectedExercises[0].name);
+            }
+            // --- EINDE SPRAAK ---
+
+            timerInterval = setInterval(timerTick, 1000);
+            updateDisplay();
         }
 
-        function pauseTimer() {
-            isRunning = false;
-            document.getElementById('startPauseBtn').textContent = 'START';
+        function pauseWorkout() {
+            isPaused = true;
+            startPauseBtn.textContent = "Hervat";
+            updateDisplay();
+        }
+        
+        function finishWorkout() {
             clearInterval(timerInterval);
+            timerInterval = null;
+            isPaused = true;
+            
+            statusDisplay.textContent = "Compleet!";
+            exerciseName.textContent = "Goed gedaan!";
+            exerciseImage.src = "https://placehold.co/600x400/374151/FFFFFF?text=Gefeliciteerd!";
+            nextExerciseName.textContent = "-";
+            startPauseBtn.textContent = "Start";
+            // We disablen de startknop niet volledig, resetten kan nog
+            startPauseBtn.disabled = true; 
+            statusDisplay.classList.add('text-cyan-400');
+            finalBeep();
+            // --- SPRAAK: Workout compleet ---
+            speak("Goed gedaan! Workout compleet.");
+            // --- EINDE SPRAAK ---
         }
 
-        function resetTimer() {
-            pauseTimer();
-            elapsed = 0;
-            currentRound = 1;
-            currentInterval = 1;
-            isWorkPhase = true;
-            updateTimerDisplay();
-        }
+        function resetWorkout() {
+            // --- SPRAAK: Stop alle spraak ---
+            if (synth) synth.cancel();
+            // --- EINDE SPRAAK ---
 
-        // Prevent screen from sleeping
-        let wakeLock = null;
-        async function requestWakeLock() {
-            try {
-                if ('wakeLock' in navigator) {
-                    wakeLock = await navigator.wakeLock.request('screen');
-                }
-            } catch (err) {
-                console.log('Wake Lock error:', err);
+            clearInterval(timerInterval);
+            timerInterval = null;
+            currentExerciseIndex = 0;
+            isResting = false;
+            isPaused = true;
+            currentTime = EXERCISE_DURATION;
+            
+            // Reset UI
+            startPauseBtn.textContent = "Start";
+            timerDisplay.classList.remove('text-yellow-400');
+            timerDisplay.classList.add('text-white');
+            timerDisplay.textContent = "00:30";
+            statusDisplay.classList.remove('text-green-400', 'text-yellow-400', 'text-cyan-400');
+
+            // Update UI op basis van selectie
+            if (selectedExercises.length > 0) {
+                startPauseBtn.disabled = false;
+                statusDisplay.textContent = "Klaar?";
+                exerciseName.textContent = "Selecteer Start";
+                exerciseImage.src = "https://placehold.co/600x400/374151/FFFFFF?text=Workout+App";
+                nextExerciseName.textContent = selectedExercises[0].name; // Gebruik 'selectedExercises'
+            } else {
+                startPauseBtn.disabled = true;
+                statusDisplay.textContent = "Wacht...";
+                exerciseName.textContent = "Kies oefeningen!";
+                exerciseImage.src = "https://placehold.co/600x400/374151/FFFFFF?text=Geen+Selectie";
+                nextExerciseName.textContent = "-";
             }
         }
 
-        // Request wake lock when starting workout
-        document.addEventListener('DOMContentLoaded', () => {
-            requestWakeLock();
+        // --- 6. NIEUWE MODAL LOGICA ---
+        function initializeSettingsModal() {
+            exerciseListContainer.innerHTML = ''; // Leegmaken voor zekerheid
+            const currentSelectionNames = selectedExercises.map(ex => ex.name);
+
+            ALL_EXERCISES.forEach(exercise => {
+                const isSelected = currentSelectionNames.includes(exercise.name);
+                
+                // Bepaal de styling op basis van selectie
+                const buttonClasses = isSelected
+                    ? 'bg-cyan-500 text-gray-900' // Geselecteerd
+                    : 'bg-gray-700 text-white'; // Niet geselecteerd
+
+                const itemHtml = `
+                    <button 
+                       class="font-medium py-2 px-4 rounded-full transition-colors duration-200 ${buttonClasses}"
+                       data-exercise-name="${exercise.name}"
+                       data-selected="${isSelected}">
+                        ${exercise.name}
+                    </button>
+                `;
+                exerciseListContainer.innerHTML += itemHtml;
+            });
+        }
+
+        function updateSelectedExercisesFromModal() {
+            const newSelectedExercises = [];
+            // Verander de selector van checkboxes naar buttons met data-selected="true"
+            const selectedButtons = exerciseListContainer.querySelectorAll('button[data-selected="true"]');
+            
+            selectedButtons.forEach(button => {
+                const exerciseName = button.dataset.exerciseName;
+                // --- FIX START ---
+                // Deze logica ontbrak door de syntax error
+                const exercise = ALL_EXERCISES.find(ex => ex.name === exerciseName);
+                if (exercise) {
+                    newSelectedExercises.push(exercise);
+                }
+            }); // <-- Deze haakjes ontbraken
+            
+            selectedExercises = newSelectedExercises; // Deze regel moet *na* de loop
+            // --- FIX END ---
+        }
+
+        // Event Listeners voor Modal
+        settingsBtn.addEventListener('click', () => {
+            initializeSettingsModal(); // Zorg dat de checkboxes de huidige selectie tonen
+            settingsModal.classList.remove('hidden');
         });
+
+        saveSettingsBtn.addEventListener('click', () => {
+            updateSelectedExercisesFromModal();
+            settingsModal.classList.add('hidden');
+            resetWorkout(); // Reset de app om de nieuwe selectie te laden
+        });
+
+        // Klik op achtergrond om te sluiten
+        settingsModal.addEventListener('click', (e) => {
+            if (e.target === settingsModal) {
+                settingsModal.classList.add('hidden');
+            }
+        });
+
+
+        // Nieuwe listener voor het klikken op de oefening-knoppen
+        exerciseListContainer.addEventListener('click', (e) => {
+            const button = e.target.closest('button[data-exercise-name]');
+            if (!button) return; // Klik was niet op een knop
+
+            // Haal de huidige status op
+            let isSelected = button.dataset.selected === 'true';
+
+            // Keer de status om
+            isSelected = !isSelected;
+            button.dataset.selected = isSelected;
+
+            // Update de styling
+            if (isSelected) {
+                button.classList.remove('bg-gray-700', 'text-white');
+                button.classList.add('bg-cyan-500', 'text-gray-900');
+            } else {
+                button.classList.remove('bg-cyan-500', 'text-gray-900');
+                button.classList.add('bg-gray-700', 'text-white');
+            }
+        });
+
+
+        // --- 7. EVENT LISTENERS (Oorspronkelijk) ---
+        startPauseBtn.addEventListener('click', () => {
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume(); // Belangrijk voor browsers die audio auto-play blokkeren
+            }
+            
+            // --- SPRAAK: Resume context (nodig in sommige browsers) ---
+            if (synth && synth.paused) {
+                synth.resume();
+            }
+            // --- EINDE SPRAAK ---
+            
+            if (isPaused) {
+                startWorkout();
+            } else {
+                pauseWorkout();
+            }
+        });
+
+        resetBtn.addEventListener('click', resetWorkout);
+
+        // Initialiseer de app bij laden
+        resetWorkout();
     </script>
 </body>
 </html>
