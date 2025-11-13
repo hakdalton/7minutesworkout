@@ -1,0 +1,23 @@
+{
+  "name": "7 Minuten Workout Timer",
+  "short_name": "7 Min Workout",
+  "description": "Een snelle, op HIIT gebaseerde workout timer.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#1f2937",
+  "theme_color": "#22d3ee",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "https://placehold.co/192x192/22d3ee/1f2937?text=7M",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://placehold.co/512x512/22d3ee/1f2937?text=7M",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}
